@@ -219,7 +219,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.31132078, g: 0.31132078, b: 0.31132078, a: 0}
+  m_BackGroundColor: {r: 0.1981132, g: 0.1981132, b: 0.1981132, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -276,6 +276,7 @@ GameObject:
   m_Component:
   - component: {fileID: 771615222}
   - component: {fileID: 771615223}
+  - component: {fileID: 771615224}
   m_Layer: 0
   m_Name: Grid
   m_TagString: Untagged
@@ -311,7 +312,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tilePrefab: {fileID: 3304661094823985064, guid: 82d854a3e5d779743ac6dcab85b8cd60,
     type: 3}
-  rows: 6
-  cols: 9
+  rows: 9
+  cols: 6
   tileSize: 1.25
   setGridUpdate: 0
+--- !u!114 &771615224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 771615221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5043afddff9c774ca1a03621f1de196, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grid: {fileID: 771615223}

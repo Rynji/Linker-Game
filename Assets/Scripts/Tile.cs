@@ -7,14 +7,16 @@ public class Tile : MonoBehaviour
     [Header("Visuals")]
     [SerializeField] private List<Sprite> visualSprites;
 
-    private int randomID;
+    private int tileID;
+    private bool isChecked;
 
-    public int RandomID { get => randomID; }
+    public int TileID { get => tileID; }
+    public bool IsChecked { get => isChecked; set => isChecked = value; }
 
     
     public void SetVisual()
     {
-        randomID = Random.Range(0, visualSprites.Count);
-        this.GetComponent<SpriteRenderer>().sprite = visualSprites[randomID];
+        tileID = Random.Range(0, visualSprites.Count);
+        this.GetComponent<SpriteRenderer>().sprite = visualSprites[tileID];
     }
 }

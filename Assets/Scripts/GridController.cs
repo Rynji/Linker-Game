@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -28,11 +29,13 @@ public class GridController : MonoBehaviour
             gridTiles = value;
         }
     }
+    public int Rows { get => rows; }
+    public int Cols { get => cols; }
 
-
+    
     void Start()
     {
-        gridTiles = new Tile[rows, cols];
+        gridTiles = new Tile[cols, rows];
 
         FillGrid();
     }
@@ -51,14 +54,18 @@ public class GridController : MonoBehaviour
             }
         }
     
-        
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            ClearGrid();
+            FillGrid();
+        }
     }
 
     private void FillGrid()
     {
-        for (int i = 0; i < rows; i++)
+        for (int i = 0; i < cols; i++)
         {
-            for (int j = 0; j < cols; j++)
+            for (int j = 0; j < rows; j++)
             {
                 GameObject go = Instantiate(tilePrefab, GetGridPosition(i, j), Quaternion.identity, this.gameObject.transform);
                 go.name = "Tile_" + i + "_" + j;
@@ -66,6 +73,19 @@ public class GridController : MonoBehaviour
                 gridTiles[i, j].SetVisual();
             }
         }
+    }
+
+    private void ClearGrid()
+    {
+        for (int i = 0; i < cols; i++)
+        {
+            for (int j = 0; j < rows; j++)
+            {
+                Destroy(gridTiles[i, j].gameObject);
+            }
+        }
+
+        Array.Clear(gridTiles, 0, gridTiles.Length);
     }
 
     private Vector3 GetGridPosition(int i, int j)
