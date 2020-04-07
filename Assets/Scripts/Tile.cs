@@ -22,6 +22,12 @@ public class Tile : MonoBehaviour
         this.GetComponent<SpriteRenderer>().sprite = visualSprites[tileID];
     }
 
+    public void SetVisualForced(int visualID)
+    {
+        tileID = visualID;
+        this.GetComponent<SpriteRenderer>().sprite = visualSprites[tileID];
+    }
+
     public void ToggleLinkVisual(bool toggle)
     {
         this.transform.GetChild(0).gameObject.SetActive(toggle);

@@ -11,12 +11,11 @@ public class InputHandler : MonoBehaviour
     private int hitCounter;
     private bool lockInput;
 
-    public bool LockInput { get => lockInput; set => lockInput = value; }
-
     
     void Start()
     {
         selectedTiles = new List<GameObject>();
+        grid.OnFillCompleted += () => { lockInput = false; };
     }
 
     void Update()

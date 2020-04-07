@@ -1,9 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class LinkController : MonoBehaviour
-{
+{ 
     [Header("Grid")]
     [SerializeField] private GridController grid;
     private int tilesRequiredForLink = 3; //This variable is fixed in this iteration, more than 3 would require recursive neighbour searching to find possible link paths within the grid.
@@ -12,7 +13,7 @@ public class LinkController : MonoBehaviour
 
     public int TilesRequiredForLink { get => tilesRequiredForLink; }
 
-    void Start()
+    void Awake()
     {
         directionsToCheck = new Vector2[8];
         directionsToCheck[0] = Vector2.up;          //down for this grid
@@ -27,13 +28,13 @@ public class LinkController : MonoBehaviour
     
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            FindLinkInGrid();
-        }
+        // if (Input.GetKeyDown(KeyCode.L))
+        // {
+        //     HasGridValidLink();
+        // }
     }
 
-    private bool FindLinkInGrid()
+    public bool HasGridValidLink()
     {
         for (int i = 0; i < grid.Cols; i++)
         {

@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class GridController : MonoBehaviour
 {
+    public event Action OnFillCompleted, OnGridShuffle;
+
     [SerializeField]
     private GameObject tilePrefab;
     [SerializeField]
@@ -16,6 +18,8 @@ public class GridController : MonoBehaviour
     private bool setGridUpdate;
 
     private Tile[,] gridTiles;
+    private List<Tile> columnFillTiles;
+    private LinkController linkController;
 
     public Tile[,] GridTiles
     {
@@ -35,6 +39,9 @@ public class GridController : MonoBehaviour
     
     void Start()
     {
+        linkController = this.GetComponent<LinkController>();
+        columnFillTiles = new List<Tile>();
+
         gridTiles = new Tile[cols, rows];
 
         FillGrid();
@@ -74,12 +81,21 @@ public class GridController : MonoBehaviour
                 gridTiles[i, j].TileCoordinates = new Vector2(i, j);
             }
         }
+
+        if(!linkController.HasGridValidLink())
+        {
+            if(OnGridShuffle != null)
+                OnGridShuffle();
+
+            ClearGrid();
+            FillGrid();
+        }
     }
 
     private void ClearGrid()
     {
         //Since the grid can be changed during runtime just clear all the tiles manually instead of going by rows/cols.
-        for (int i = transform.childCount; i --> 0; )
+        for (int i = transform.childCount; i --> 0;)
         {
             GameObject.Destroy(transform.GetChild(i).gameObject);
         }
@@ -98,18 +114,44 @@ public class GridController : MonoBehaviour
 
     public IEnumerator RefillGrid()
     {
-        for (int i = 0; i < cols; i++)
+        int emptySpotsInCol = 0;
+
+        //Collapse down existing blocks on empty spots
+        for (int j = rows; j --> 0;) //reversed loop as I want to work from the bottom up.
         {
-            for (int j = 0; j < rows; j++)
+            if (gridTiles[0, j] == null)
             {
-                if(gridTiles[i, j] == null)
+                print("Empty spot found at: " + 0 + "," + j);
+                emptySpotsInCol++;
+                
+                //First empty spot encountered, this empty spot needs to grab a block from above before moving on.
+                //So first thing: we find the nearest not empty block and place it at our empty position.
+                
+                //if(Block above not empty)
                 {
-                    print("Empty spot found at: " + i + "," + j);
+                    //Move not empty block to empty position
                 }
+                //else -> loop up until non empty block found or < 0 reached
+                //non-empty block found: move it to empty position
+                //< 0 reached: Grab first block from columnFillTiles[] under here.
+
             }
         }
 
-        //TODO: Event OnFillCompleted();
+        //Spawn new Blocks
+        for (int i = 0; i < emptySpotsInCol; i++)
+        {
+            GameObject go = Instantiate(tilePrefab, GetGridPosition(0, -i -1), Quaternion.identity, this.gameObject.transform);
+            columnFillTiles.Add(go.GetComponent<Tile>());
+            columnFillTiles[i].SetVisual();
+        }
+
+        //Collapse down new blocks on empty spots
+
+        
+
+        if(OnFillCompleted != null)
+            OnFillCompleted();
 
         yield return 0;
     }
