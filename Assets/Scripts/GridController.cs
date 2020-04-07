@@ -71,6 +71,7 @@ public class GridController : MonoBehaviour
                 go.name = "Tile_" + i + "_" + j;
                 gridTiles[i, j] = go.GetComponent<Tile>();
                 gridTiles[i, j].SetVisual();
+                gridTiles[i, j].TileCoordinates = new Vector2(i, j);
             }
         }
     }
@@ -93,5 +94,23 @@ public class GridController : MonoBehaviour
         gridPos = this.gameObject.transform.localPosition + new Vector3((i * tileSize), (-j * tileSize), 0f);
 
         return gridPos;
+    }
+
+    public IEnumerator RefillGrid()
+    {
+        for (int i = 0; i < cols; i++)
+        {
+            for (int j = 0; j < rows; j++)
+            {
+                if(gridTiles[i, j] == null)
+                {
+                    print("Empty spot found at: " + i + "," + j);
+                }
+            }
+        }
+
+        //TODO: Event OnFillCompleted();
+
+        yield return 0;
     }
 }

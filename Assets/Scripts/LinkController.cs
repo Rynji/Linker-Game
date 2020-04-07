@@ -6,10 +6,11 @@ public class LinkController : MonoBehaviour
 {
     [Header("Grid")]
     [SerializeField] private GridController grid;
-    private int tilesRequiredForLink = 3; //This variable is fixed in this iteration, more than 3 would require recursive neighbour searching to find actual link paths.
+    private int tilesRequiredForLink = 3; //This variable is fixed in this iteration, more than 3 would require recursive neighbour searching to find possible link paths within the grid.
 
     private Vector2[] directionsToCheck;
 
+    public int TilesRequiredForLink { get => tilesRequiredForLink; }
 
     void Start()
     {
@@ -107,5 +108,28 @@ public class LinkController : MonoBehaviour
             return false;
         else
             return true;
+    }
+
+    public bool IsTileMatchingNeighbour(Tile baseTile, Tile tileToCheck)
+    {
+        if (!baseTile.TileID.Equals(tileToCheck.TileID))
+        {
+            return false;
+        }
+        else //Same type, proceed to check if neighbour.
+        {
+            if(baseTile.TileCoordinates.x - tileToCheck.TileCoordinates.x > 1 || baseTile.TileCoordinates.x - tileToCheck.TileCoordinates.x < -1)
+            {
+                return false;
+            }
+            else if(baseTile.TileCoordinates.y - tileToCheck.TileCoordinates.y > 1 || baseTile.TileCoordinates.y - tileToCheck.TileCoordinates.y < -1)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
     }
 }
