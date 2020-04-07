@@ -77,12 +77,10 @@ public class GridController : MonoBehaviour
 
     private void ClearGrid()
     {
-        for (int i = 0; i < cols; i++)
+        //Since the grid can be changed during runtime just clear all the tiles manually instead of going by rows/cols.
+        for (int i = transform.childCount; i --> 0; )
         {
-            for (int j = 0; j < rows; j++)
-            {
-                Destroy(gridTiles[i, j].gameObject);
-            }
+            GameObject.Destroy(transform.GetChild(i).gameObject);
         }
 
         Array.Clear(gridTiles, 0, gridTiles.Length);
