@@ -87,6 +87,7 @@ public class InputHandler : MonoBehaviour
 
     private void FinishSelectedLink()
     {
+        //Check if selected link is big enough then walk through the whole grid and set all selected tiles as completed.
         if(selectedTiles.Count > linkController.TilesRequiredForLink - 1)
         {
             for (int i = 0; i < grid.Cols; i++)
@@ -97,8 +98,12 @@ public class InputHandler : MonoBehaviour
                     {
                         if (grid.GridTiles[i, j] != null && grid.GridTiles[i, j].gameObject.Equals(selectedTiles[k]))
                         {
-                            Destroy(grid.GridTiles[i, j].gameObject);
-                            grid.GridTiles[i,j] = null;
+                            //Destroy(grid.GridTiles[i, j].gameObject);
+                            //grid.GridTiles[i,j] = null;
+                            //Don't destroy the tiles, set them as completed as we need their information when moving them down.
+                            grid.GridTiles[i, j].IsCompleted = true;
+                            grid.GridTiles[i, j].GetComponent<SpriteRenderer>().sprite = null;
+                            grid.CompletedLink.Add(grid.GridTiles[i, j]);
                             break;
                         }
                     }
