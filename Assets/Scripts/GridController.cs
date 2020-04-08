@@ -130,106 +130,109 @@ public class GridController : MonoBehaviour
 
     public IEnumerator RefillGrid()
     {
-        int emptySpotsInCol = 0;
-        int emptySpotIndex = -1;
-        bool lookingForBlock = false;
-
-        //currentCol = 0
-        for (int i = 0; i < rows; i++)
+        for (int colIndex = 0; colIndex < cols; colIndex++)
         {
-            if (gridTiles[0, i].IsCompleted)
+            int emptySpotsInCol = 0;
+            int emptySpotIndex = -1;
+            bool lookingForBlock = false;
+
+            for (int i = 0; i < rows; i++)
             {
-                emptySpotsInCol++;
+                if (gridTiles[colIndex, i].IsCompleted)
+                {
+                    emptySpotsInCol++;
+                }
             }
-        }
-        print(emptySpotsInCol + " empty spots found.");
+            
+            //print(emptySpotsInCol + " empty spots found.");
 
-        //Spawn new Blocks that are needed above the grid
-        for (int i = 0; i < emptySpotsInCol; i++)
-        {
-            GameObject go = Instantiate(tilePrefab, GetGridPosition(0, -i -1), Quaternion.identity, this.gameObject.transform);
-            columnFillTiles.Add(go.GetComponent<Tile>());
-            columnFillTiles[i].SetVisual();
-        }
-
-        //Collapse down existing blocks on empty spots
-        for (int j = rows; j-- > 0;) //reversed loop as I want to work from the bottom up.
-        {
-            print("Now checking j: " + j);
-            if (gridTiles[0, j].IsCompleted && !lookingForBlock)
+            //Spawn new Blocks that are needed above the grid
+            for (int i = 0; i < emptySpotsInCol; i++)
             {
-                emptySpotIndex = j;
-                print("Empty spot found at: " + emptySpotIndex);
-
-                //First empty spot encountered, this empty spot needs to grab a block from above before moving on.
-                //So first thing: we find the nearest not empty block and place it at our empty position.
-                lookingForBlock = true;
-
-                //else -> loop up until non empty block found or < 0 reached
-                //non-empty block found: move it to empty position
-                //< 0 reached: Grab first block from columnFillTiles[] under here.
-
+                GameObject go = Instantiate(tilePrefab, GetGridPosition(colIndex, -i - 1), Quaternion.identity, this.gameObject.transform);
+                columnFillTiles.Add(go.GetComponent<Tile>());
+                columnFillTiles[i].SetVisual();
             }
-            else if (gridTiles[0, j].IsCompleted && lookingForBlock)
+
+            //Collapse down existing blocks on empty spots
+            for (int j = rows; j-- > 0;) //reversed loop as I want to work from the bottom up.
             {
-                print("Looking for block...");
+                //print("Now checking j: " + j);
+                if (gridTiles[colIndex, j].IsCompleted && !lookingForBlock)
+                {
+                    emptySpotIndex = j;
+                    //print("Empty spot found at: " + emptySpotIndex);
+
+                    //First empty spot encountered, this empty spot needs to grab a block from above before moving on.
+                    //So first thing: we find the nearest not empty block and place it at our empty position.
+                    lookingForBlock = true;
+
+                    //else -> loop up until non empty block found or < 0 reached
+                    //non-empty block found: move it to empty position
+                    //< 0 reached: Grab first block from columnFillTiles[] under here.
+
+                }
+                else if (gridTiles[colIndex, j].IsCompleted && lookingForBlock)
+                {
+                    //print("Looking for block...");
+                }
+                else if (!gridTiles[colIndex, j].IsCompleted && lookingForBlock) //Block not empty and looking for a block
+                {
+                    //Move first not-empty tile to registered empty index in Tile array
+                    gridTiles[colIndex, emptySpotIndex].TileID = gridTiles[colIndex, j].TileID;
+                    gridTiles[colIndex, emptySpotIndex].TileCoordinates = gridTiles[colIndex, j].TileCoordinates;
+
+                    //Remove (TODO: move down animation) old Tile
+                    Destroy(gridTiles[colIndex, j].gameObject);
+                    gridTiles[colIndex, j].IsCompleted = true; //Set old tile as empty again so it can be used on the next step
+
+                    //Instantiate the tile on the empty position
+                    GameObject go = Instantiate(tilePrefab, GetGridPosition(colIndex, emptySpotIndex), Quaternion.identity, this.gameObject.transform);
+                    go.name = "Tile_" + colIndex + "_" + emptySpotIndex;
+                    //Assign variables over that are stored in the array (could make deep copy here? I just copy the values myself)
+                    go.GetComponent<Tile>().TileID = gridTiles[colIndex, emptySpotIndex].TileID;
+                    go.GetComponent<Tile>().TileCoordinates = new Vector2(colIndex, emptySpotIndex);
+                    gridTiles[colIndex, emptySpotIndex] = go.GetComponent<Tile>();
+                    gridTiles[colIndex, emptySpotIndex].SetVisualForced(gridTiles[colIndex, emptySpotIndex].TileID);
+
+                    //Now reset back to above newest placed block.
+                    lookingForBlock = false;
+                    j = rows - 1;
+                    emptySpotIndex = -1;
+                }
             }
-            else if (!gridTiles[0, j].IsCompleted && lookingForBlock) //Block not empty and looking for a block
+
+            yield return new WaitForSeconds(0.1f);
+
+            //Collapse down new blocks on empty spots (if needed)
+            if (columnFillTiles.Count > 0)
             {
-                //Move first not-empty tile to registered empty index in Tile array
-                gridTiles[0, emptySpotIndex].TileID = gridTiles[0, j].TileID;
-                gridTiles[0, emptySpotIndex].TileCoordinates = gridTiles[0, j].TileCoordinates;
+                //Flip the list (this is needed to get the blocks in the right order top to bottom)
+                columnFillTiles.Reverse();
 
-                //Remove (TODO: move down animation) old Tile
-                Destroy(gridTiles[0, j].gameObject);
-                gridTiles[0, j].IsCompleted = true; //Set old tile as empty again so it can be used on the next step
-
-                //Instantiate the tile on the empty position
-                GameObject go = Instantiate(tilePrefab, GetGridPosition(0, emptySpotIndex), Quaternion.identity, this.gameObject.transform);
-                go.name = "Tile_" + 0 + "_" + emptySpotIndex;
-                //Assign variables over that are stored in the array (could make deep copy here? I just copy the values myself)
-                go.GetComponent<Tile>().TileID = gridTiles[0, emptySpotIndex].TileID;
-                go.GetComponent<Tile>().TileCoordinates = new Vector2(0, emptySpotIndex);
-                gridTiles[0, emptySpotIndex] = go.GetComponent<Tile>(); 
-                gridTiles[0, emptySpotIndex].SetVisualForced(gridTiles[0, emptySpotIndex].TileID);
-
-                //Now reset back to above newest placed block.
-                lookingForBlock = false;
-                j = rows - 1;
-                emptySpotIndex = -1;
+                for (int i = 0; i < columnFillTiles.Count; i++)
+                {
+                    //instantiate
+                    GameObject go = Instantiate(tilePrefab, GetGridPosition(colIndex, i), Quaternion.identity, this.gameObject.transform);
+                    go.name = "Tile_" + colIndex + "_" + i;
+                    go.GetComponent<Tile>().TileID = columnFillTiles[i].TileID;
+                    go.GetComponent<Tile>().TileCoordinates = new Vector2(colIndex, i);
+                    //assign to grid array
+                    gridTiles[colIndex, i] = go.GetComponent<Tile>();
+                    gridTiles[colIndex, i].SetVisualForced(gridTiles[colIndex, i].TileID);
+                    //Destroy top tile
+                    Destroy(columnFillTiles[i].gameObject);
+                }
+                columnFillTiles.Clear();
             }
-        }
 
-        yield return new WaitForSeconds(1.25f);
-
-        //Collapse down new blocks on empty spots (if needed)
-        if (columnFillTiles.Count > 0)
-        {
-            //Flip the list (this is needed to get the blocks in the right order top to bottom)
-            columnFillTiles.Reverse();
-
-            for (int i = 0; i < columnFillTiles.Count; i++)
+            //Clear old completed link list
+            for (int i = 0; i < completedLink.Count; i++)
             {
-                //instantiate
-                GameObject go = Instantiate(tilePrefab, GetGridPosition(0, i), Quaternion.identity, this.gameObject.transform);
-                go.name = "Tile_" + 0 + "_" + i;
-                go.GetComponent<Tile>().TileID = columnFillTiles[i].TileID;
-                go.GetComponent<Tile>().TileCoordinates = new Vector2(0, i);
-                //assign to grid array
-                gridTiles[0, i] = go.GetComponent<Tile>();
-                gridTiles[0, i].SetVisualForced(gridTiles[0, i].TileID);
-                //Destroy top tile
-                Destroy(columnFillTiles[i].gameObject);
+                Destroy(completedLink[i].gameObject);
             }
-            columnFillTiles.Clear();
+            completedLink.Clear();
         }
-
-        //Clear old completed link list
-        for (int i = 0; i < completedLink.Count; i++)
-        {
-            Destroy(completedLink[i].gameObject);
-        }
-        completedLink.Clear();
 
         if(OnFillCompleted != null)
             OnFillCompleted();
