@@ -1,9 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class InputHandler : MonoBehaviour
 {
+    public event Action<int> OnLinkSuccesfull;
+    
     [SerializeField] private GridController grid;
     [SerializeField] private LinkController linkController;
 
@@ -98,11 +101,10 @@ public class InputHandler : MonoBehaviour
                     {
                         if (grid.GridTiles[i, j] != null && grid.GridTiles[i, j].gameObject.Equals(selectedTiles[k]))
                         {
-                            //Destroy(grid.GridTiles[i, j].gameObject);
-                            //grid.GridTiles[i,j] = null;
-                            //Don't destroy the tiles, set them as completed as we need their information when moving them down.
+                            //Completed tiles are hidden as their information is still needed to collapse the grid from the top.
                             grid.GridTiles[i, j].IsCompleted = true;
                             grid.GridTiles[i, j].GetComponent<SpriteRenderer>().sprite = null;
+                            //The CompletedLink list is later used to delete this completed link.
                             grid.CompletedLink.Add(grid.GridTiles[i, j]);
                             break;
                         }
@@ -110,18 +112,20 @@ public class InputHandler : MonoBehaviour
                 }
             }
 
+            if(OnLinkSuccesfull != null)
+                OnLinkSuccesfull(selectedTiles.Count);
+
             //Reset
             ResetSelection();
 
             //Lock input until fill has been completed
             lockInput = true;
 
-            //TODO: Event OnLinkSuccesfull
-
             StartCoroutine(grid.RefillGrid());
         }
         else //Link not big enough
         {
+            //TODO: Show some red glow or something to remind the player that a minium of 3 links are needed.
             ResetSelection();
         }
     }

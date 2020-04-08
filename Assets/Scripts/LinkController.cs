@@ -5,14 +5,16 @@ using UnityEngine;
 
 public class LinkController : MonoBehaviour
 { 
-    [Header("Grid")]
+    [Header("Others")]
     [SerializeField] private GridController grid;
+    [SerializeField] private ScoreHandler scoreHandler;
     private int tilesRequiredForLink = 3; //This variable is fixed in this iteration, more than 3 would require recursive neighbour searching to find possible link paths within the grid.
 
     private Vector2[] directionsToCheck;
 
     public int TilesRequiredForLink { get => tilesRequiredForLink; }
 
+    
     void Awake()
     {
         directionsToCheck = new Vector2[8];
@@ -26,13 +28,6 @@ public class LinkController : MonoBehaviour
         directionsToCheck[7] = new Vector2(-1, -1); //top left
     }
     
-    void Update()
-    {
-        // if (Input.GetKeyDown(KeyCode.L))
-        // {
-        //     HasGridValidLink();
-        // }
-    }
 
     public bool HasGridValidLink()
     {
@@ -68,7 +63,7 @@ public class LinkController : MonoBehaviour
             //All neighbours checked
             grid.GridTiles[x, y].IsChecked = true;
             
-            //Make up the score on current tile. For Example if tilesRequiredForLink == 3 then we need at least 2 neighbours to make a valid link
+            //Make up the score on current tile. In this case we have a minimum of 3 for a link so 2 neighbours means a link of 3 is always possible.
             if(amountOfNeighbourMatches < tilesRequiredForLink - 1)
                 return false;
             else
@@ -111,6 +106,9 @@ public class LinkController : MonoBehaviour
             return true;
     }
 
+    /// <summary>
+    /// Used during player input to determine if made move is valid.
+    /// </summary>
     public bool IsTileMatchingNeighbour(Tile baseTile, Tile tileToCheck)
     {
         if (!baseTile.TileID.Equals(tileToCheck.TileID))

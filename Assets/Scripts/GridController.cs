@@ -46,8 +46,6 @@ public class GridController : MonoBehaviour
         completedLink = new List<Tile>();
 
         gridTiles = new Tile[cols, rows];
-
-        FillGrid();
     }
 
     void Update()
@@ -69,22 +67,10 @@ public class GridController : MonoBehaviour
             ClearGrid();
             FillGrid();
         }
-
-        if(Input.GetKeyDown(KeyCode.D))
-        {
-            DebugGrid();
-        }
     }
 
-    private void DebugGrid()
-    {
-        for (int i = 0; i < rows; i++)
-        {
-            print("Row " + i + " has ID: " + gridTiles[0, i].TileID);
-        }
-    }
 
-    private void FillGrid()
+    public void FillGrid()
     {
         for (int i = 0; i < cols; i++)
         {
@@ -98,14 +84,7 @@ public class GridController : MonoBehaviour
             }
         }
 
-        if(!linkController.HasGridValidLink())
-        {
-            if(OnGridShuffle != null)
-                OnGridShuffle();
-
-            ClearGrid();
-            FillGrid();
-        }
+        CheckGridForLinks();
     }
 
     private void ClearGrid()
@@ -117,6 +96,21 @@ public class GridController : MonoBehaviour
         }
 
         Array.Clear(gridTiles, 0, gridTiles.Length);
+    }
+
+    /// <summary>
+    /// Reshuffles the grid if there are no valid links to be made.
+    /// </summary>
+    private void CheckGridForLinks()
+    {
+        if(!linkController.HasGridValidLink())
+        {
+            if(OnGridShuffle != null)
+                OnGridShuffle();
+
+            ClearGrid();
+            FillGrid();
+        }
     }
 
     private Vector3 GetGridPosition(int i, int j)
@@ -236,6 +230,8 @@ public class GridController : MonoBehaviour
 
         if(OnFillCompleted != null)
             OnFillCompleted();
+
+        CheckGridForLinks();
 
         yield return 0;
     }
