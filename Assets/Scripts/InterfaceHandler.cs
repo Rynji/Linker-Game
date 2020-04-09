@@ -118,7 +118,7 @@ public class InterfaceHandler : MonoBehaviour
         levelButton.GetComponent<Image>().color = level.levelButtonColour;
     }
 
-    private void ClosePopup()
+    public void ClosePopup()
     {
         popupUI.SetActive(false);
         retryButton.SetActive(false);

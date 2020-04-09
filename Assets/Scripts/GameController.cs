@@ -62,6 +62,7 @@ public class GameController : MonoBehaviour
         scoreHandler.ResetMoves();
         scoreHandler.OnScoreChanged -= interfaceHandler.SetScoreDisplay;
         gridController.ResetGridController();
+        interfaceHandler.ClosePopup();
         interfaceHandler.ShowLevelSelectUI();
     }
 
