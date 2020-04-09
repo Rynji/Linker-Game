@@ -3,24 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(LinkController))]
 public class GridController : MonoBehaviour
 {
     public event Action OnFillCompleted, OnGridShuffle;
 
-    [SerializeField]
-    private GameObject tilePrefab;
-    [SerializeField]
-    private int rows, cols = 0;
-    [SerializeField]
-    private float tileSize;
-    [Header("Debug Tools")]
-    [SerializeField]
-    private bool setGridUpdate;
+    [SerializeField] private int rows, cols = 0;
+    [SerializeField] private float tileSize;
+    //[Header("Debug Tools")]
+    //[SerializeField] private bool setGridUpdate;
 
     private Tile[,] gridTiles;
     private List<Tile> completedLink;
     private List<Tile> columnFillTiles;
     private LinkController linkController;
+    private GameObject tilePrefab;
+    private bool isGridActive;
 
     public Tile[,] GridTiles
     {
@@ -37,32 +35,33 @@ public class GridController : MonoBehaviour
     public int Rows { get => rows; }
     public int Cols { get => cols; }
     public List<Tile> CompletedLink { get => completedLink; set => completedLink = value; }
+    public GameObject TilePrefab { get => tilePrefab; set => tilePrefab = value; }
 
     
     void Start()
     {
         linkController = this.GetComponent<LinkController>();
+        
         columnFillTiles = new List<Tile>();
         completedLink = new List<Tile>();
-
         gridTiles = new Tile[cols, rows];
     }
 
     void Update()
     {
         //Used at the beginning of development to determine grid size/positioning.
-        if (setGridUpdate)
-        {
-            for (int i = 0; i < rows; i++)
-            {
-                for (int j = 0; j < cols; j++)
-                {
-                    gridTiles[i, j].transform.position = GetGridPosition(i, j);
-                }
-            }
-        }
+        // if (setGridUpdate)
+        // {
+        //     for (int i = 0; i < rows; i++)
+        //     {
+        //         for (int j = 0; j < cols; j++)
+        //         {
+        //             gridTiles[i, j].transform.position = GetGridPosition(i, j);
+        //         }
+        //     }
+        // }
     
-        if(Input.GetKeyDown(KeyCode.R))
+        if(isGridActive && Input.GetKeyDown(KeyCode.R))
         {
             ClearGrid();
             FillGrid();
@@ -87,8 +86,18 @@ public class GridController : MonoBehaviour
         CheckGridForLinks();
     }
 
+    public void ResetGridController()
+    {
+        ClearGrid();
+        columnFillTiles = new List<Tile>();
+        completedLink = new List<Tile>();
+        gridTiles = new Tile[cols, rows];
+    }
+
     private void ClearGrid()
     {
+        isGridActive = false;
+
         //Since the grid can be changed during runtime just clear all the tiles manually instead of going by rows/cols.
         for (int i = transform.childCount; i --> 0;)
         {
@@ -111,6 +120,7 @@ public class GridController : MonoBehaviour
             ClearGrid();
             FillGrid();
         }
+        isGridActive = true;
     }
 
     private Vector3 GetGridPosition(int i, int j)
@@ -124,6 +134,8 @@ public class GridController : MonoBehaviour
 
     public IEnumerator RefillGrid()
     {
+        isGridActive = false;
+
         for (int colIndex = 0; colIndex < cols; colIndex++)
         {
             int emptySpotsInCol = 0;
@@ -158,13 +170,7 @@ public class GridController : MonoBehaviour
                     //print("Empty spot found at: " + emptySpotIndex);
 
                     //First empty spot encountered, this empty spot needs to grab a block from above before moving on.
-                    //So first thing: we find the nearest not empty block and place it at our empty position.
                     lookingForBlock = true;
-
-                    //else -> loop up until non empty block found or < 0 reached
-                    //non-empty block found: move it to empty position
-                    //< 0 reached: Grab first block from columnFillTiles[] under here.
-
                 }
                 else if (gridTiles[colIndex, j].IsCompleted && lookingForBlock)
                 {

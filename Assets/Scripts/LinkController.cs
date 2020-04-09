@@ -37,13 +37,13 @@ public class LinkController : MonoBehaviour
             {
                 if(CheckTileNeighboursForLink(i, j, tilesRequiredForLink))
                 {
-                    print("Possible link found at " + i + "," + j + "! Current grid is valid.");
+                    //print("Possible link found at " + i + "," + j + "! Current grid is valid.");
                     return true;
                 }
             }
         }
 
-        print("Current grid is not valid, no possible links available");
+        //print("Current grid is not valid, no possible links available");
         return false;
     }
 
