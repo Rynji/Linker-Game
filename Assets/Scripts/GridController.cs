@@ -200,9 +200,8 @@ public class GridController : MonoBehaviour
                     j = rows - 1;
                     emptySpotIndex = -1;
                 }
+                yield return new WaitForSeconds(0.0025f);
             }
-
-            yield return new WaitForSeconds(0.1f);
 
             //Collapse down new blocks on empty spots (if needed)
             if (columnFillTiles.Count > 0)
@@ -222,6 +221,7 @@ public class GridController : MonoBehaviour
                     gridTiles[colIndex, i].SetVisualForced(gridTiles[colIndex, i].TileID);
                     //Destroy top tile
                     Destroy(columnFillTiles[i].gameObject);
+                    yield return new WaitForSeconds(0.001f);
                 }
                 columnFillTiles.Clear();
             }

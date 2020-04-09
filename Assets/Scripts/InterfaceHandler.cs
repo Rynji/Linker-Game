@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,11 +14,14 @@ public class InterfaceHandler : MonoBehaviour
     [Header("UI Elements")]
     [SerializeField] private GameObject mainMenuUI; 
     [SerializeField] private GameObject levelSelectUI, gameUI, popupUI;
+    [SerializeField] private Transform levelButtonGroupParent;
     [Header("UI Visuals")]
     [SerializeField] private SpriteRenderer gameplayBackground; 
     [Header("Buttons")]
     [SerializeField] private GameObject retryButton; 
     [SerializeField] private GameObject levelSelectButton;
+    [Header("Prefabs")]
+    [SerializeField] private GameObject levelButtonPrefab;
 
 
     //UI Display Methods
@@ -69,9 +73,14 @@ public class InterfaceHandler : MonoBehaviour
         gametypeText.text = gametypeTextToDisplay;
     }
 
-    public void SetGameplayBottomText(string text)
+    public void SetMovesLeftText(int maxMovesAllowed, int movesTaken)
     {
-        gameplayBottomText.text = text;
+        gameplayBottomText.text = "Moves Left: " + (maxMovesAllowed - movesTaken);
+        
+        if(maxMovesAllowed == -1)
+            gameplayBottomText.text = "Get the required score to win!";
+        else if(maxMovesAllowed - movesTaken <= 0)
+            gameplayBottomText.text = "No more moves left!";
     }
 
     //Buttons/actions
@@ -92,6 +101,21 @@ public class InterfaceHandler : MonoBehaviour
     public void SetGameBackground(Sprite backgroundSprite)
     {
         gameplayBackground.sprite = backgroundSprite;
+    }
+
+    public void InstantiateLevelButtons(Level level)
+    {
+        GameObject levelButton = Instantiate(levelButtonPrefab, new Vector3(0f, 0f, 0f), Quaternion.identity, levelButtonGroupParent);
+        levelButton.transform.GetChild(0).GetComponent<Text>().text = level.levelName;
+        levelButton.transform.GetChild(1).GetComponent<Text>().text = "Target: " + String.Format("{0:n0}", level.scoreRequired);
+        
+        if(level.maxMovesAllowed > 0)
+            levelButton.transform.GetChild(2).GetComponent<Text>().text = "Max Moves: " + level.maxMovesAllowed;
+        else
+            levelButton.transform.GetChild(2).GetComponent<Text>().text = "Unlimited Moves";
+        
+        levelButton.GetComponent<Button>().onClick.AddListener(delegate { gameController.SetLevelActive(level); });
+        levelButton.GetComponent<Image>().color = level.levelButtonColour;
     }
 
     private void ClosePopup()

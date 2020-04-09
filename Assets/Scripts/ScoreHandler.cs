@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class ScoreHandler : MonoBehaviour
 {
-    public event Action OnEnoughScored; 
-    public event Action<int, int> OnScoreChanged;
+    public event Action OnEnoughScored, OnMaxMovesUsed; 
+    public event Action<int, int> OnScoreChanged, OnMovesIncremented;
     
     [Header("Others")]
     [SerializeField] private InputHandler inputHandler;
@@ -14,10 +14,10 @@ public class ScoreHandler : MonoBehaviour
     [SerializeField] private int[] scoringTable = new int[10];
     [SerializeField] private int flatScoreOnMaxLink;
 
-    private int currentScore;
-    private int scoreRequired;
+    private int currentScore, scoreRequired, movesTaken, maxMovesAllowed;
 
     public int ScoreRequired { get => scoreRequired; set => scoreRequired = value; }
+    public int MaxMovesAllowed { get => maxMovesAllowed; set => maxMovesAllowed = value; }
 
 
     void Start()
@@ -44,11 +44,28 @@ public class ScoreHandler : MonoBehaviour
         CheckCurrentScore();
     }
 
+    public void IncrementMovesTaken()
+    {
+        movesTaken++;
+        if(maxMovesAllowed > 0 && movesTaken >= maxMovesAllowed)
+        {
+            if(OnMaxMovesUsed != null)
+                OnMaxMovesUsed();
+        }
+        if(OnMovesIncremented != null)
+            OnMovesIncremented(maxMovesAllowed, movesTaken);
+    }
+
     public void ResetScore()
     {
         currentScore = 0;
         if(OnScoreChanged != null)
             OnScoreChanged(0, 0);
+    }
+
+    public void ResetMoves()
+    {
+        movesTaken = 0;
     }
 
     private void CheckCurrentScore()

@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c6473a36b21d6349b7b1d79741f7678, type: 3}
   m_Name: Level_0
   m_EditorClassIdentifier: 
+  levelName: Level 1
   backgroundImage: {fileID: 21300000, guid: b8e417fa38eac7d468ae5926afc33a81, type: 3}
+  levelButtonColour: {r: 0.9490197, g: 0.73333335, b: 0.40000004, a: 1}
   tilePrefab: {fileID: 3304661094823985064, guid: 82d854a3e5d779743ac6dcab85b8cd60,
     type: 3}
   scoreRequired: 5000
+  maxMovesAllowed: -1

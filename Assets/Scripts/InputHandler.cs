@@ -9,28 +9,30 @@ public class InputHandler : MonoBehaviour
     
     [SerializeField] private GridController grid;
     [SerializeField] private LinkController linkController;
+    [SerializeField] private ScoreHandler scoreHandler;
 
     private List<GameObject> selectedTiles;
-    private int hitCounter;
-    private bool lockInput;
+    private bool lockInput, gameEnd;
 
-    
+    public bool LockInput { get => lockInput; set => lockInput = value; }
+    public bool GameEnd { get => gameEnd; set => gameEnd = value; }
+
+
     void Start()
     {
         selectedTiles = new List<GameObject>();
         grid.OnFillCompleted += () => { lockInput = false; };
+        lockInput = true;
     }
 
     void Update()
     {
-        if (!lockInput && Input.GetMouseButton(0))
+        if (!lockInput && !gameEnd && Input.GetMouseButton(0))
         {
             RaycastHit hitInfo = new RaycastHit();
             bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo);
             if (hit)
             {
-                //Debug.Log("Hit " + hitInfo.transform.gameObject.name);
-
                 if(selectedTiles.Count == 0) //First hit
                 {
                     selectedTiles.Add(hitInfo.transform.gameObject);
@@ -42,14 +44,9 @@ public class InputHandler : MonoBehaviour
                     selectedTiles[selectedTiles.Count - 1].GetComponent<Tile>().ToggleLinkVisual(true);
                 }
             }
-            else
-            {
-                //Debug.Log("No hit");
-            }
         }
-        if (Input.GetMouseButtonUp(0))
+        if (!lockInput && !gameEnd && Input.GetMouseButtonUp(0))
         {
-            //print("Mouse Released");
             FinishSelectedLink();
         }
     }
@@ -80,12 +77,11 @@ public class InputHandler : MonoBehaviour
 
     private void ResetSelection()
     {
-        hitCounter = 0;
-            for (int i = 0; i < selectedTiles.Count; i++)
-            {
-                selectedTiles[i].GetComponent<Tile>().ToggleLinkVisual(false);
-            }
-            selectedTiles.Clear();
+        for (int i = 0; i < selectedTiles.Count; i++)
+        {
+            selectedTiles[i].GetComponent<Tile>().ToggleLinkVisual(false);
+        }
+        selectedTiles.Clear();
     }
 
     private void FinishSelectedLink()
@@ -115,17 +111,16 @@ public class InputHandler : MonoBehaviour
             if(OnLinkSuccesfull != null)
                 OnLinkSuccesfull(selectedTiles.Count);
 
-            //Reset
+            scoreHandler.IncrementMovesTaken();
             ResetSelection();
 
-            //Lock input until fill has been completed
             lockInput = true;
-
             StartCoroutine(grid.RefillGrid());
         }
         else //Link not big enough
         {
             //TODO: Show some red glow or something to remind the player that a minium of 3 links are needed.
+
             ResetSelection();
         }
     }
