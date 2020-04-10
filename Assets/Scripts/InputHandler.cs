@@ -10,6 +10,7 @@ public class InputHandler : MonoBehaviour
     [SerializeField] private GridController grid;
     [SerializeField] private LinkController linkController;
     [SerializeField] private ScoreHandler scoreHandler;
+    [SerializeField] private AudioController audioController;
 
     private List<GameObject> selectedTiles;
     private bool lockInput, gameEnd;
@@ -36,18 +37,20 @@ public class InputHandler : MonoBehaviour
                 if(selectedTiles.Count == 0) //First hit
                 {
                     selectedTiles.Add(hitInfo.transform.gameObject);
-                    selectedTiles[selectedTiles.Count - 1].GetComponent<Tile>().ToggleLinkVisual(true);
+                    selectedTiles[selectedTiles.Count - 1].GetComponent<Tile>().DoTileLinkedVisuals(true);
+                    audioController.PlaySoundEffect(selectedTiles[selectedTiles.Count - 1].GetComponent<Tile>().LinkCreatedClip);
                 }
                 else if(CheckSelection(hitInfo))
                 {
                     selectedTiles.Add(hitInfo.transform.gameObject);
-                    selectedTiles[selectedTiles.Count - 1].GetComponent<Tile>().ToggleLinkVisual(true);
+                    selectedTiles[selectedTiles.Count - 1].GetComponent<Tile>().DoTileLinkedVisuals(true);
+                    audioController.PlaySoundEffect(selectedTiles[selectedTiles.Count - 1].GetComponent<Tile>().LinkCreatedClip);
                 }
             }
         }
         if (!lockInput && !gameEnd && Input.GetMouseButtonUp(0))
         {
-            FinishSelectedLink();
+            StartCoroutine(FinishSelectedLink()); //locks input so gets called once
         }
     }
 
@@ -67,7 +70,7 @@ public class InputHandler : MonoBehaviour
             if(selectedTiles.Count > 1 && selectedTiles[selectedTiles.Count - 2].Equals(hitInfo.transform.gameObject))
             {
                 //print("Previous tile hit!");
-                selectedTiles[selectedTiles.Count - 1].GetComponent<Tile>().ToggleLinkVisual(false);
+                selectedTiles[selectedTiles.Count - 1].GetComponent<Tile>().DoTileLinkedVisuals(false);
                 selectedTiles.RemoveAt(selectedTiles.Count - 1); //Remove latest hit tile, because the player swiped back to previous tile on his/her link.
             }
         }
@@ -75,17 +78,21 @@ public class InputHandler : MonoBehaviour
         return false;
     }
 
-    private void ResetSelection()
+    private void ResetSelection(bool unlockInput = false)
     {
         for (int i = 0; i < selectedTiles.Count; i++)
         {
-            selectedTiles[i].GetComponent<Tile>().ToggleLinkVisual(false);
+            selectedTiles[i].GetComponent<Tile>().DoTileLinkedVisuals(false);
         }
         selectedTiles.Clear();
+        
+        lockInput = !unlockInput;
     }
 
-    private void FinishSelectedLink()
+    private IEnumerator FinishSelectedLink()
     {
+        lockInput = true;
+
         //Check if selected link is big enough then walk through the whole grid and set all selected tiles as completed.
         if(selectedTiles.Count > linkController.TilesRequiredForLink - 1)
         {
@@ -97,9 +104,11 @@ public class InputHandler : MonoBehaviour
                     {
                         if (grid.GridTiles[i, j] != null && grid.GridTiles[i, j].gameObject.Equals(selectedTiles[k]))
                         {
-                            //Completed tiles are hidden as their information is still needed to collapse the grid from the top.
+                            //Completed tiles will be hidden as their information is still needed to collapse the grid from the top.
                             grid.GridTiles[i, j].IsCompleted = true;
-                            grid.GridTiles[i, j].GetComponent<SpriteRenderer>().sprite = null;
+                            audioController.PlaySoundEffect(grid.GridTiles[i, j].LinkCompletedClip);
+                            yield return StartCoroutine(grid.GridTiles[i, j].DoTileCompletedVisuals());
+
                             //The CompletedLink list is later used to delete this completed link.
                             grid.CompletedLink.Add(grid.GridTiles[i, j]);
                             break;
@@ -114,14 +123,24 @@ public class InputHandler : MonoBehaviour
             scoreHandler.IncrementMovesTaken();
             ResetSelection();
 
-            lockInput = true;
             StartCoroutine(grid.RefillGrid());
+            audioController.PlaySoundEffect(audioController.GridRefillClip);
         }
         else //Link not big enough
         {
-            //TODO: Show some red glow or something to remind the player that a minium of 3 links are needed.
+            for (int i = 0; i < selectedTiles.Count; i++)
+            {
+                selectedTiles[i].GetComponent<Tile>().DoTileLinkedVisuals(true, true);
+            }
 
-            ResetSelection();
+            if(selectedTiles.Count > 0)
+                audioController.PlaySoundEffect(selectedTiles[0].GetComponent<Tile>().LinkFailedClip);
+            
+            yield return new WaitForSeconds(0.1f);
+
+            ResetSelection(true);
         }
+
+        yield return 0;
     }
 }

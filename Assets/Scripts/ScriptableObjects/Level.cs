@@ -10,6 +10,9 @@ public class Level : ScriptableObject
     [Header("Visuals")]
     public Sprite backgroundImage;
     public Color levelButtonColour;
+    [Header("Audio")]
+    public AudioClip gridRefillClip;
+    public AudioClip levelWonClip, levelLostClip;
     [Header("Tile used in this level")]
     public GameObject tilePrefab;
     [Header("Game score & Max moves")]

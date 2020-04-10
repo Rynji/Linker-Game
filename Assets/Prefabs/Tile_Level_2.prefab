@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3304661094823985063}
   - component: {fileID: 1117846310469373698}
   m_Layer: 0
-  m_Name: Tile
+  m_Name: Tile_Level_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -102,6 +102,77 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 3db90c1d8db09fb478ed43c1e3a22386, type: 3}
   - {fileID: 21300000, guid: e90ec7e3f569ae74aa5d72f8b98c333c, type: 3}
   - {fileID: 21300000, guid: e4c8f2411afe38b4389bd757dd5b197f, type: 3}
+  tileLinkedCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.002777014
+      value: 1.001071
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.49848345
+      value: 0.7993324
+      inSlope: 0.00066040945
+      outSlope: 0.00066040945
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.31820193
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0.4001216
+      outSlope: 0.4001216
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  tileLinkedAnimSpeed: 0.175
+  tileCompletedCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.27448034
+      value: 0.7196542
+      inSlope: 1.199518
+      outSlope: 1.199518
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  tileCompletedAnimSpeed: 0.1
+  linkCreatedClip: {fileID: 8300000, guid: bae3a1ad6a7132747a74f021b5f7b977, type: 3}
+  linkFailedClip: {fileID: 8300000, guid: 4477fd1713224ff458818b8bde5a1cd1, type: 3}
+  linkCompletedClip: {fileID: 8300000, guid: e3d8f4574b814b5459d2c8f56516be4a, type: 3}
 --- !u!65 &1117846310469373698
 BoxCollider:
   m_ObjectHideFlags: 0

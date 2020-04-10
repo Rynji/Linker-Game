@@ -87,6 +87,7 @@ public class InterfaceHandler : MonoBehaviour
 
     public void OnRetryButtonClicked()
     {
+        gameController.ResetCurrentLevel();
         gameController.SetLevelActive(gameController.CurrentLevel);
         ClosePopup();
     }
