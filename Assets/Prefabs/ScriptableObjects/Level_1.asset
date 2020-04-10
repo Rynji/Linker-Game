@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Level_1
   m_EditorClassIdentifier: 
   levelName: Level 2
-  backgroundImage: {fileID: 21300000, guid: 2a9d1350c06c5ba47822b2e25d54ca0d, type: 3}
-  levelButtonColour: {r: 0.27450982, g: 0.4784314, b: 0.6627451, a: 1}
+  backgroundImage: {fileID: 21300000, guid: 89c359780e617d84db2b7b7c0752b846, type: 3}
+  levelButtonColour: {r: 0.128649, g: 0.5566038, b: 0.1371885, a: 1}
   gridRefillClip: {fileID: 8300000, guid: 6aba5d19ed787f44995db75cbbf8ac3d, type: 3}
   levelWonClip: {fileID: 8300000, guid: 8109ed5e749cc1d4f8d5c07d14417df9, type: 3}
   levelLostClip: {fileID: 8300000, guid: d4c0d6016da96c440a3023e5ec8990a0, type: 3}

@@ -97,11 +97,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   visualSprites:
-  - {fileID: 21300000, guid: 3e09bcf1b49ef4a419a7deb3942c76cb, type: 3}
-  - {fileID: 21300000, guid: cd52ac5bb3d814f41a6ca5488998aee0, type: 3}
-  - {fileID: 21300000, guid: 3db90c1d8db09fb478ed43c1e3a22386, type: 3}
-  - {fileID: 21300000, guid: e90ec7e3f569ae74aa5d72f8b98c333c, type: 3}
-  - {fileID: 21300000, guid: e4c8f2411afe38b4389bd757dd5b197f, type: 3}
+  - {fileID: 21300000, guid: 2ae10af1f3fd2a546b0079810e813129, type: 3}
+  - {fileID: 21300000, guid: 7ec14a65ca208fd4caa25b36cb828d94, type: 3}
+  - {fileID: 21300000, guid: bbd8f8de2a0c58f4388bbadbcac15f2e, type: 3}
+  - {fileID: 21300000, guid: 7489f9d726d391540aa09744111ea4d1, type: 3}
+  - {fileID: 21300000, guid: f29e5d46be0e60143ac92d0dd15400fe, type: 3}
   tileLinkedCurve:
     serializedVersion: 2
     m_Curve:
@@ -212,7 +212,7 @@ Transform:
   m_GameObject: {fileID: 8181152019659543113}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.33, y: 1.33, z: 1.33}
   m_Children: []
   m_Father: {fileID: 3304661094823985061}
   m_RootOrder: 0
