@@ -16,7 +16,7 @@ public class InterfaceHandler : MonoBehaviour
     [SerializeField] private GameObject levelSelectUI, gameUI, popupUI;
     [SerializeField] private Transform levelButtonGroupParent;
     [Header("UI Visuals")]
-    [SerializeField] private SpriteRenderer gameplayBackground; 
+    [SerializeField] private Image gameplayBackground; 
     [Header("Buttons")]
     [SerializeField] private GameObject retryButton; 
     [SerializeField] private GameObject levelSelectButton;
@@ -31,7 +31,6 @@ public class InterfaceHandler : MonoBehaviour
         mainMenuUI.SetActive(true);
         levelSelectUI.SetActive(false);
         gameUI.SetActive(false);
-        gameplayBackground.sprite = null;
     }
 
     public void ShowLevelSelectUI()
@@ -39,7 +38,6 @@ public class InterfaceHandler : MonoBehaviour
         mainMenuUI.SetActive(false);
         levelSelectUI.SetActive(true);
         gameUI.SetActive(false);
-        gameplayBackground.sprite = null;
     }
 
     public void ShowGameUI()

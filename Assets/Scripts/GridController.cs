@@ -8,7 +8,11 @@ public class GridController : MonoBehaviour
 {
     public event Action OnFillCompleted, OnGridShuffle;
 
-    [SerializeField] private int rows, cols = 0;
+    [Header("Gameplay Values")]
+    [Range(5, 16)]
+    [SerializeField] private int rows;
+    [Range(5, 16)]
+    [SerializeField] private int cols;
     [SerializeField] private float tileSize;
     //[Header("Debug Tools")]
     //[SerializeField] private bool setGridUpdate;
@@ -18,6 +22,8 @@ public class GridController : MonoBehaviour
     private List<Tile> columnFillTiles;
     private LinkController linkController;
     private GameObject tilePrefab;
+    private Transform gridTransform;
+    private Bounds gridBounds;
     private bool isGridActive;
 
     public Tile[,] GridTiles
@@ -45,6 +51,12 @@ public class GridController : MonoBehaviour
         columnFillTiles = new List<Tile>();
         completedLink = new List<Tile>();
         gridTiles = new Tile[cols, rows];
+
+        gridTransform = this.gameObject.transform;
+
+        //Center the grid based on tileSize/spacing
+        gridTransform.position = new Vector3((-tileSize * cols / 2f) + tileSize * 0.5f, (tileSize * rows / 2f) - tileSize * 0.5f, 0f);
+        ScaleCameraToGrid();
     }
 
     void Update()
@@ -92,6 +104,25 @@ public class GridController : MonoBehaviour
         columnFillTiles = new List<Tile>();
         completedLink = new List<Tile>();
         gridTiles = new Tile[cols, rows];
+    }
+
+    public void ScaleCameraToGrid()
+    {
+        //Create bounds around the grid, *1.4f in the height to accomodate the gameplay UI
+        gridBounds = new Bounds(new Vector3(0, 0, 0), new Vector3(cols * tileSize, (rows * tileSize) * 1.4f, 1));
+        //Scale camera according to the grid bounds
+        float screenRatio = (float)Screen.width / (float)Screen.height;
+        float targetRatio = gridBounds.size.x / gridBounds.size.y;
+
+        if (screenRatio >= targetRatio)
+        {
+            Camera.main.orthographicSize = gridBounds.size.y / 2; //Scale camera to grid width
+        }
+        else 
+        {
+            float differenceInSize = targetRatio / screenRatio;
+            Camera.main.orthographicSize = gridBounds.size.y / 2 * differenceInSize; //Add the required extra height to the orthographic size through differenceInSize
+        }
     }
 
     private void ClearGrid()
